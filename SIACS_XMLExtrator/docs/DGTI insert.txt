@@ -1,0 +1,7 @@
+String tag = get tag do atributo no arquivo XML
+
+log tag_id_tag = select id from tag where tag = tag;
+
+log tag_id_tag = select id from tag where tag = NOME-COMPLETO;
+
+insert into value (value, tag_id_tag) values ("Filipe Santos Brito)
