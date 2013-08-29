@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -15,16 +16,27 @@ import java.util.zip.ZipInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.Attributes;
+
+
+
+
 
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+
 import java.io.File;
+
+
+
+
 
 
 import model.business.Tag;
@@ -39,8 +51,13 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.Dom4JDriver;
 
 public class SIACSXmlExtrator {
+	private List<String> rootTagList = new ArrayList<String>();
+	private List<String> childrenTagList = new ArrayList<String>();
+	private List<Tag> tagList = new ArrayList<Tag>();
+	
 	
 	private static SIACSXmlExtrator singleton = null;
+
 	public static SIACSXmlExtrator getInstance() {
 		if(singleton == null){
 			return new SIACSXmlExtrator();
@@ -106,47 +123,107 @@ public class SIACSXmlExtrator {
 	
 	//#3
 	public void readXMLTest(String caminho_do_xml){
-		System.out.println(caminho_do_xml);
-			
 	    try {
-	    	 
 	    	SAXParserFactory factory = SAXParserFactory.newInstance();
 	    	SAXParser saxParser = factory.newSAXParser();
 	     
 	    	DefaultHandler handler = new DefaultHandler() {
-	    	
 	     
-	    	public void startElement(String uri, String localName,String qName, Attributes attributes) throws SAXException {
-	    		System.out.println("Start Element :" + qName);
-	    		// pega o valor de um elemento atraves da sua tag
-	    		// System.out.println(attributes.getValue("DATA-ATUALIZACAO"));
-	    		
-	    		int length = attributes.getLength();
-	    		for (int i=0; i<length; i++) {
-	    			String name = attributes.getQName(i);
-	    			System.out.println("Name:" + name);
-
+	    		public void startElement(String uri, String localName,String qName, Attributes attributes) throws SAXException {
+	    			//System.out.println(qName);
+	    			rootTagList.add(qName);
+	    			
+	    			int length = attributes.getLength();
+	    			for (int i=0; i<length; i++) {
+	    				childrenTagList.add(attributes.getQName(i));
+	    			}
+					
+	    			
+	    			/*
+	    			System.out.println("Start Element :" + qName);
+	    			// pega o valor de um elemento atraves da sua tag
+	    			// System.out.println(attributes.getValue("DATA-ATUALIZACAO"));
+	    			 */
 	    		}
 	    		
-	    		
-	    	}
-	        
-	    	public void endElement(String uri, String localName, String qName) throws SAXException {
-	    		System.out.println("End Element :" + qName);
-	    	}
-	     	
-	    	public void characters(char ch[], int start, int length) throws SAXException {
+	    		/*
+	    		public void endElement(String uri, String localName, String qName) throws SAXException {
+	    			System.out.println("End Element :" + qName);
+	    		}
+
+	    		public void characters(char ch[], int start, int length) throws SAXException {
 	    			System.out.println("Salary : " + new String(ch, start, length));
-	    	}
-	    	
+	    		}
+	    		*/
 	    	};
-	    	// /Users/filipebrito/Desktop/teste.xml
 	    	
-	           saxParser.parse(caminho_do_xml, handler);
+	    	// /Users/filipebrito/Desktop/teste.xml
+	        saxParser.parse(caminho_do_xml, handler);
 	     
-	         } catch (Exception e) {
-	           e.printStackTrace();
-	         }
+	        }catch (Exception e) {
+	        	e.printStackTrace();
+	        }
+		//verRootTagList();
+		//verChildrenTagList();
+		addTagList();
+		//verListaPrincipal();
+
+	}
+	
+	
+	public void verRootTagList(){
+		Iterator<String> it = this.rootTagList.iterator();
+		while(it.hasNext()){			
+			String rootTagName = it.next();
+			System.out.println(rootTagName);
+			Tag tag_ = new Tag();
+			tag_.setRoot_tag(rootTagName);
+			tagList.add(tag_);
+		}
+		System.out.println("---------");
+	}
+
+	
+	public void verChildrenTagList(){
+		Iterator<String> it = this.childrenTagList.iterator();
+		while(it.hasNext()){
+			String childrenTagName = it.next();
+			System.out.println(childrenTagName);
+			Tag tag_ = new Tag();
+			tag_.setChildren_tag(childrenTagName);
+			tagList.add(tag_);
+		}
+		System.out.println("========== COMECOU ==============");
+	}
+	
+	public void addTagList(){
+		Iterator<String> it = this.rootTagList.iterator();
+		Iterator<String> it2 = this.childrenTagList.iterator();
+		while(it.hasNext()){			
+			String rootTagName = it.next();
+			System.out.println(rootTagName);
+			Tag tag_ = new Tag();
+			tag_.setRoot_tag(rootTagName);
+			while(it2.hasNext()){	
+				String childrenTagName = it2.next();
+				System.out.println(childrenTagName);
+				tag_.setChildren_tag(childrenTagName);
+			}
+			System.out.println("----------------");
+			tagList.add(tag_);
+		}
+		System.out.println("---------");
+		
+	}
+	
+	
+	public void verListaPrincipal(){
+		Iterator<Tag> it = this.tagList.iterator();
+		while(it.hasNext()){
+			Tag tag_ = (Tag) it.next();
+			System.out.println("Elemento: " + tag_.getRoot_tag());
+			System.out.println("Atributo: " + tag_.getChildren_tag());
+		}
 		
 	}
 
