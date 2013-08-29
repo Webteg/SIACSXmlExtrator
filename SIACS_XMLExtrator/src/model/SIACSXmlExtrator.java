@@ -13,12 +13,27 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import org.xml.sax.Attributes;
+
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+import java.io.File;
+
 
 import model.business.Tag;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.Dom4JDriver;
@@ -92,22 +107,46 @@ public class SIACSXmlExtrator {
 	//#3
 	public void readXMLTest(String caminho_do_xml){
 		System.out.println(caminho_do_xml);
-		try {
-			XStream xStream = new XStream(new Dom4JDriver());
-			xStream.alias("tag", ArrayList.class);
-            xStream.processAnnotations(Tag.class);
-            
-            BufferedReader input = new BufferedReader(new FileReader(caminho_do_xml));
-            ArrayList<Tag> tag = (ArrayList) xStream.fromXML(input);
-            input.close();
-            for (Tag tag_ : tag) {
-                System.out.println("Tag: " + tag_.getRoot_tag() );
-            }
 			
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	    try {
+	    	 
+	    	SAXParserFactory factory = SAXParserFactory.newInstance();
+	    	SAXParser saxParser = factory.newSAXParser();
+	     
+	    	DefaultHandler handler = new DefaultHandler() {
+	    	
+	     
+	    	public void startElement(String uri, String localName,String qName, Attributes attributes) throws SAXException {
+	    		System.out.println("Start Element :" + qName);
+	    		// pega o valor de um elemento atraves da sua tag
+	    		// System.out.println(attributes.getValue("DATA-ATUALIZACAO"));
+	    		
+	    		int length = attributes.getLength();
+	    		for (int i=0; i<length; i++) {
+	    			String name = attributes.getQName(i);
+	    			System.out.println("Name:" + name);
+
+	    		}
+	    		
+	    		
+	    	}
+	        
+	    	public void endElement(String uri, String localName, String qName) throws SAXException {
+	    		System.out.println("End Element :" + qName);
+	    	}
+	     	
+	    	public void characters(char ch[], int start, int length) throws SAXException {
+	    			System.out.println("Salary : " + new String(ch, start, length));
+	    	}
+	    	
+	    	};
+	    	// /Users/filipebrito/Desktop/teste.xml
+	    	
+	           saxParser.parse(caminho_do_xml, handler);
+	     
+	         } catch (Exception e) {
+	           e.printStackTrace();
+	         }
 		
 	}
 

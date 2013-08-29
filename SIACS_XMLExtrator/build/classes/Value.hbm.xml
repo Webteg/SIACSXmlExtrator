@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 28-Jul-2013 17:35:27 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    
+    <class name="model.business.Value" table="value">
+    	<meta attribute="class-description"> This class contains value details. </meta>
+    
+		<id name="id_value" type="integer" column="id_value">
+			<generator class="native" />
+		</id>
+
+		<property name="content" type="text" column="content" />
+
+        <many-to-one name="tag" class="model.business.Tag" fetch="select">
+            <column name="tag_id_tag" not-null="true" />
+        </many-to-one>
+       
+    </class>
+
+</hibernate-mapping>
