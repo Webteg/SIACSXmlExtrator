@@ -10,11 +10,11 @@ import model.util.Hibernate;
 public class HibernateTest {
 	public static void main(String[] args){
 		HibernateTest main = new HibernateTest();
-		main.insertElement();
+		//main.insertElement();
 		//main.insertValue();
 		//main.getOneTag();
 	}
-	
+	/*
 	public void insertElement(){
 		Session session = Hibernate.getSessionFactory().openSession();
 		Transaction transaction = null;

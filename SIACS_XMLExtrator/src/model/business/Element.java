@@ -5,7 +5,8 @@ import java.util.Set;
 
 public class Element {
 	 private int id_element;
-	 private String name;
+	 private String root_name;
+	 private String children_name;
 	 private Set<Attribute> attribute = new HashSet<Attribute>(0);
 	 
 	 public Element(){}
@@ -18,12 +19,20 @@ public class Element {
 		this.id_element = id_element;
 	}
 
-	public String getName() {
-		return name;
+	public String getRoot_name() {
+		return root_name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setRoot_name(String root_name) {
+		this.root_name = root_name;
+	}
+
+	public String getChildren_name() {
+		return children_name;
+	}
+
+	public void setChildren_name(String children_name) {
+		this.children_name = children_name;
 	}
 
 	public Set<Attribute> getAttribute() {

@@ -27,10 +27,13 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class SIACSXmlExtrator {
-	private static SIACSXmlExtrator singleton = null;
 	private HashMap<String, Element> hashElement = new HashMap<String, Element>();
 	private HashMap<String, Attribute> hashAttribute = new HashMap<String, Attribute>();
 	private List<Value> listValue = new ArrayList<Value>(); 
+
+	private ZipInputStream zis;
+	private static SIACSXmlExtrator singleton = null;
+
 
 	public static SIACSXmlExtrator getInstance() {
 		if(singleton == null){
@@ -67,7 +70,7 @@ public class SIACSXmlExtrator {
 	//#2
 	public void unzipFile(String caminho_do_zip, String destino){
 		try{
-			ZipInputStream zis = new ZipInputStream(new FileInputStream(caminho_do_zip));
+			zis = new ZipInputStream(new FileInputStream(caminho_do_zip));
 			ZipEntry ze = zis.getNextEntry();
 			byte[] buffer = new byte[1024];
 			String unzipXmlPath = "";
@@ -103,6 +106,8 @@ public class SIACSXmlExtrator {
 			DefaultHandler handler = new DefaultHandler() {
 
 				public void startElement(String uri, String localName,String qName, Attributes attributes) throws SAXException {
+					System.out.println(qName);
+					/*
 					Element element = new Element();
 					element.setName(qName);
 					hashElement.put(qName, element);
@@ -123,7 +128,7 @@ public class SIACSXmlExtrator {
 							listValue.add(value);
 						}
 					}
-
+					 */
 				}
 
 			};
@@ -135,7 +140,7 @@ public class SIACSXmlExtrator {
 			e.printStackTrace();
 		}		    
 	}
-		
+		/*
 		public void seeElements(){
 			Iterator it = this.hashElement.values().iterator();
 			while(it.hasNext()){
@@ -162,5 +167,6 @@ public class SIACSXmlExtrator {
 				System.out.println("Attribute: " + value.getAttribute().getName());
 				System.out.println("================");
 			}
-		}		
+		}	
+		*/	
 }

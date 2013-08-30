@@ -10,7 +10,8 @@
 			<generator class="native" />
 		</id>
 		        
-        <property name="name" type="string" column="name" length="120" />
+        <property name="root_name" type="string" column="root_name" length="120" />
+        <property name="children_name" type="string" column="children_name" length="120" />
       
     </class>
 
