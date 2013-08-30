@@ -1,5 +1,7 @@
 package model.db;
 
-public interface IValueDAO {
+import model.business.Value;
 
+public interface IValueDAO {
+	public void save(Value value) throws Exception;
 }

@@ -1,5 +1,7 @@
 package model.db;
 
-public interface IElementDAO {
+import model.business.Element;
 
+public interface IElementDAO {
+	public void save(Element element) throws Exception;
 }
