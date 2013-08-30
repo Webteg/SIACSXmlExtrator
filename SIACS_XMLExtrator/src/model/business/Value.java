@@ -3,32 +3,34 @@ package model.business;
 public class Value{
 	private int id_value;
 	private String content;
-	private Tag tag;
+	private Attribute attribute;
 	
 	public Value(){}
-	
-	public void setId_value(int id_value_) {
-		this.id_value = id_value_;
+
+	public int getId_value() {
+		return id_value;
+	}
+
+	public void setId_value(int id_value) {
+		this.id_value = id_value;
+	}
+
+	public String getContent() {
+		return content;
 	}
 
 	public void setContent(String content) {
 		this.content = content;
 	}
-	
-	public void setTag(Tag tag_) {
-		this.tag = tag_;
+
+	public Attribute getAttribute() {
+		return attribute;
 	}
 
-	public int getId_value() {
-		return id_value;
+	public void setAttribute(Attribute attribute) {
+		this.attribute = attribute;
 	}
 	
-	public String getContent() {
-		return content;
-	}
 	
-	public Tag getTag() {
-		return tag;
-	}
 	
 }

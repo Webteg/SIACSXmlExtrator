@@ -10,28 +10,22 @@ import model.util.Hibernate;
 public class HibernateTest {
 	public static void main(String[] args){
 		HibernateTest main = new HibernateTest();
-		//main.insertTag();
+		main.insertElement();
 		//main.insertValue();
 		//main.getOneTag();
 	}
-
-	public void insertTag(){
+	
+	public void insertElement(){
 		Session session = Hibernate.getSessionFactory().openSession();
 		Transaction transaction = null;
 
 		try {
 			transaction = session.beginTransaction();
 
-			Tag tag = new Tag();
-			tag.setRoot_tag("NOME_EVENTO");
-			tag.setChildren_tag("DADOS-BASICOS-DE-OUTRAS-PARTICIPACOES-EM-EVENTOS-CONGRESSOS");
+			Element element = new Element();
+			element.setName("NOME_EVENTO");
 
-			Tag tag2 = new Tag();
-			tag2.setRoot_tag("NOME_EVENTO");
-			tag2.setChildren_tag("TESTE");
-			
-			session.save(tag);
-			session.save(tag2);
+			session.save(element);
 			transaction.commit();
 			System.out.println("Records inserted sucessessfully");     
 		} catch (HibernateException e) {
@@ -42,7 +36,7 @@ public class HibernateTest {
 		}		
 
 	}
-
+	/*
 	public void insertValue(){
 		Session session = Hibernate.getSessionFactory().openSession();
 		Transaction transaction = null;
@@ -71,5 +65,6 @@ public class HibernateTest {
 		Tag tag_ = (Tag) session.createQuery("from Tag where children_tag like '%TESTE%' ").uniqueResult();
 		System.out.println(tag_.getId_tag());
 	}
+	*/
 
 }

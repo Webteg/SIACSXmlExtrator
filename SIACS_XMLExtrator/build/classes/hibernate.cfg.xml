@@ -11,10 +11,11 @@
         <property name="connection.pool_size">1</property>
         <property name="show_sql">true</property>
 
-<!--    <property name="hbm2ddl.auto">update</property> -->
+    	<!-- <property name="hbm2ddl.auto">update</property>  --> 
     
-        <mapping resource="Tag.hbm.xml"/>
-        <mapping resource="Value.hbm.xml"/>
+        <mapping resource="element.hbm.xml"/>
+        <mapping resource="attribute.hbm.xml"/>
+        <mapping resource="value.hbm.xml"/>
         
     </session-factory>
 </hibernate-configuration>

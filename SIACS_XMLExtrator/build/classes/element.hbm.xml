@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    
+    <class name="model.business.Element" table="element" >
+		<meta attribute="class-description"> This class contains element details. </meta>
+        
+		<id name="id_element" type="integer" column="id_element">
+			<generator class="native" />
+		</id>
+		        
+        <property name="name" type="string" column="name" length="120" />
+      
+    </class>
+
+</hibernate-mapping>

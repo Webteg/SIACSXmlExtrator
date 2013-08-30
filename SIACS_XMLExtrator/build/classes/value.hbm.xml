@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    
+    <class name="model.business.Value" table="value">
+    	<meta attribute="class-description"> This class contains value details. </meta>
+    
+		<id name="id_value" type="integer" column="id_value">
+			<generator class="native" />
+		</id>
+
+        <property name="content" type="string" column="content" />
+
+        <many-to-one name="attribute" class="model.business.Attribute" fetch="select">
+            <column name="id_attribute" not-null="true" />
+        </many-to-one>
+       
+    </class>
+
+</hibernate-mapping>
