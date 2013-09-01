@@ -43,7 +43,10 @@ public class Element {
 		this.attribute = attribute;
 	}
 	 
-	 
+	@Override
+	public String toString() {
+		return "Root element : " + this.getRoot_name() + " Children element : " + this.getChildren_name();
+	}
 	 
 	 
 }

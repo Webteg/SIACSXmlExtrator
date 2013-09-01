@@ -106,7 +106,7 @@ public class SIACSXmlExtrator {
 			DefaultHandler handler = new DefaultHandler() {
 
 				public void startElement(String uri, String localName,String qName, Attributes attributes) throws SAXException {
-					System.out.println(qName);
+					
 					/*
 					Element element = new Element();
 					element.setName(qName);
@@ -130,6 +130,15 @@ public class SIACSXmlExtrator {
 					}
 					 */
 				}
+				
+
+			    public void endElement(String uri, String localName, String qName) throws SAXException {
+			    	
+			    	/*
+			    	System.out.println(qName);
+			    	System.out.println("===============");
+			    	*/
+			    }
 
 			};
 			saxParser.parse(unzipXmlPath, handler);

@@ -1,14 +1,11 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import model.business.Attribute;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,72 +29,36 @@ public class TesteXml {
 
 		Document doc = null;
 		try {
-			doc = db.parse("C:\\Users\\filipebrito\\Desktop\\curriculo.xml");
+			doc = db.parse("/Users/filipebrito/Downloads/curriculo.xml");
 		}catch (Exception e){
 		}
-
- 		HashMap<String, Element> hashElement = new HashMap<String, Element>();
- 		HashMap<String, Node> hashNode = new HashMap<String, Node>();
-
- 		go(hashElement, hashNode, doc.getDocumentElement());
-		//seeHash(hashElement,hashNode );
-	}
-	
-
-	public void go(HashMap<String, Element> hashElement, HashMap<String, Node> hashNode, Element e){
- 		NodeList children = e.getChildNodes();
- 		hashElement.put(e.getNodeName(), e);
- 		System.out.println(e.getNodeName());
- 		System.out.println("===========================");
- 		Element aux;
- 		for (int i = 0; i < children.getLength(); i++) {
- 			Node n = children.item(i);
- 			if (i == 0 )
- 				aux = (Element) n;
- 			System.out.println(n.getNodeName());
- 			hashNode.put(n.getNodeName(), n);
- 			go(hashElement, hashNode, (Element) n);
- 		}
-			go(hashElement, hashNode, );
-	}
-
-	private void seeHash(HashMap<String, Element> hashElement, HashMap<String, Node> hashNode ) {
-		Iterator it = hashElement.values().iterator();
-		Iterator it2 = hashNode.values().iterator();
 		
-		while(it.hasNext()){
-			Element e = (Element) it.next();
-			System.out.println(" --- NO PAI ---- ");
-			System.out.println(e.getNodeName());
-			/*s
-			while (it2.hasNext()) {
-				Node n = (Node) it.next();
-				System.out.println(n.getNodeName());
-			}
-			*/
-		}		
+		List<model.business.Element> list = new ArrayList<model.business.Element>();
+ 		go(list, doc.getDocumentElement());
+ 		
+ 		Iterator it = list.iterator();
+ 		while(it.hasNext()){
+ 			model.business.Element ele = (model.business.Element) it.next();
+ 			System.out.println(ele.toString());
+ 		}
+ 		
+ 		//System.out.println(list);
 	}
 
-/*
- * 
- *  	public void go(List<String> list, Element e){
- 		HashMap<Element, Node> hash = new HashMap<Element, Node>();
- 		System.out.println(e.getNodeName());
- 		System.out.println("========");
- 		NodeList children = e.getChildNodes();
- 		for (int i = 0; i < children.getLength(); i++) {
- 			Node n = children.item(i);
- 			System.out.println(n.getNodeName());
- 			
- 			if (n.getNodeType() == Node.ELEMENT_NODE) {
- 				System.out.println("oi");
- 			//	list.add(n.getNodeName());s
- 				//go(list, (Element) n);
- 			}
- 			
- 		}
-	}	
- * 
- */
+	public void go(List<model.business.Element> list, Element e){
+        final NodeList children = e.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            final Node n = children.item(i);
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+            	model.business.Element ele = new model.business.Element();
+            	ele.setChildren_name(n.getNodeName());
+            	ele.setRoot_name(n.getParentNode().toString().replace(": null]", "").replace("[", ""));
+            	
+                list.add(ele);
+                //System.out.println(n.getParentNode().toString());
+                go(list, (Element) n);
+            }
+        }
+    }	
 	
 }
