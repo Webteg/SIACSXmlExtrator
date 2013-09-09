@@ -10,9 +10,16 @@
 			<generator class="native" />
 		</id>
 		        
-        <property name="root_name" type="string" column="root_name" length="120" />
-        <property name="children_name" type="string" column="children_name" length="120" />
-      
+        <property name="name" type="string" column="name" length="120" />
+
+		<many-to-one name="parent_element" class="model.business.Element" cascade="all">
+			<column name="id_parent_element" not-null="false" />
+        </many-to-one>
+        
+  		<set name="element" table="element" lazy="false" cascade="all-delete-orphan" inverse="false">
+			<key column="id_parent_element" />
+			<one-to-many class="model.business.Element" />
+     	</set>        
     </class>
 
 </hibernate-mapping>

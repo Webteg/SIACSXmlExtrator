@@ -10,11 +10,11 @@ import model.util.Hibernate;
 public class HibernateTest {
 	public static void main(String[] args){
 		HibernateTest main = new HibernateTest();
-		//main.insertElement();
+		main.insertElement();
 		//main.insertValue();
 		//main.getOneTag();
 	}
-	/*
+
 	public void insertElement(){
 		Session session = Hibernate.getSessionFactory().openSession();
 		Transaction transaction = null;
@@ -23,9 +23,14 @@ public class HibernateTest {
 			transaction = session.beginTransaction();
 
 			Element element = new Element();
-			element.setName("NOME_EVENTO");
+			element.setName("CURRICULO-VITAE");
+			
+			Element element2 = new Element();
+			element2.setName("DADOS-GERAIS");
+			element2.setParent_element(element);
 
 			session.save(element);
+			session.save(element2);
 			transaction.commit();
 			System.out.println("Records inserted sucessessfully");     
 		} catch (HibernateException e) {

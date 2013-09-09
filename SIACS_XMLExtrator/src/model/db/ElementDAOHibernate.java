@@ -12,9 +12,9 @@ public class ElementDAOHibernate implements IElementDAO {
 	@Override
 	public void save(Element element) throws Exception {
 		Transaction t = session.beginTransaction();
-        session.save(element);
-        t.commit();		
-		
+		session.save(element);
+		session.flush();
+		t.commit();		
 	}
 
 }

@@ -1,0 +1,6 @@
+= pega todos elementos e o seus respectivos pais = 
+
+select a.name,
+b.name
+from element as a, element as b
+where a.id_parent_element = b.id_element;
