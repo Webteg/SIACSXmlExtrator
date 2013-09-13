@@ -1,23 +1,27 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import model.db.ElementDAOHibernate;
-import model.db.IElementDAO;
+import model.db.ManagerDB;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class TesteXml {
-	private IElementDAO elementDAO = new ElementDAOHibernate();
+	List<model.business.Element> elementList = new ArrayList<model.business.Element>();
+	List<model.business.Attribute> attributeList = new ArrayList<model.business.Attribute>();
+	List<model.business.Value> valueList = new ArrayList<model.business.Value>();
 	
+	ManagerDB managerDB = ManagerDB.getInstance();
+
 	public static void main(String[] args) throws Exception{
 		TesteXml t = new TesteXml();
 		t.iniciando();
@@ -38,42 +42,72 @@ public class TesteXml {
 		}catch (Exception e){
 		}
 		
-		List<model.business.Element> newList = new ArrayList<model.business.Element>();
- 		go(newList, doc.getDocumentElement());
+		getXmlAllContent(elementList, attributeList, valueList, doc.getDocumentElement());
  		
- 		Iterator it = newList.iterator();
- 		while(it.hasNext()){
- 			model.business.Element e = (model.business.Element) it.next();
- 			model.business.Element element = new model.business.Element();
- 			element.setName(e.getName());
- 			model.business.Element parent_element = e.getParent_element();
- 			if(parent_element.getName().equals("#document") )
- 				parent_element.setName(null);
- 			element.setParent_element(parent_element);
- 			//elementDAO.save(element);
- 			System.out.println(element.toString());
+		int elementsize = elementList.size();
+ 		for(int i = 0; i < elementsize ; ++i){
+ 			model.business.Element element = (model.business.Element) elementList.get(i);	
+ 			System.out.println(element);
+ 			managerDB.insertElement(element);
  		}
- 		
+
+		int attributesize = attributeList.size();
+ 		for(int i = 0; i < attributesize ; ++i){
+ 			model.business.Attribute attr = (model.business.Attribute) attributeList.get(i);	
+ 			System.out.println(attr);
+ 			managerDB.insertAttribute(attr);
+ 		}
+
+ 		int valuesize = attributeList.size();
+ 		for(int i = 0; i < valuesize ; ++i){
+ 			model.business.Value val = (model.business.Value) valueList.get(i);	
+ 			//System.out.println(val);
+ 			managerDB.insertValue(val);
+ 		}
 	}
 
-	public void go(List<model.business.Element> list, Element e){
+	//#4
+	public void getXmlAllContent(List<model.business.Element> elementList, 
+			List<model.business.Attribute> attributeList, List<model.business.Value> valueList, Element e){
+		
 		model.business.Element element = new model.business.Element();
-		model.business.Element element2 = new model.business.Element();
+		model.business.Element parentElement = new model.business.Element();
+		
+		String nameparentElement =  e.getParentNode().toString().replace(": null]", "").replace("[", "");
+		if(nameparentElement.equals("#document"))
+			nameparentElement = null;
 		
 		element.setName(e.getNodeName());
-		element2.setName(e.getParentNode().toString().replace(": null]", "").replace("[", ""));
-		element.setParent_element(element2);
-		list.add(element);
+		parentElement.setName(nameparentElement);
+		
+		element.setParent_element(parentElement);
+		elementList.add(element);
+		
+		 if( e.hasAttributes()) {
+		      NamedNodeMap attrs = e.getAttributes();  
+		      for(int i = 0 ; i<attrs.getLength() ; i++) {
+		    	  Attr attribute = (Attr)attrs.item(i);
+		    	  model.business.Attribute attrib = new model.business.Attribute();
+		    	  model.business.Value val = new model.business.Value();
+		    	  
+		    	  attrib.setName(attribute.getName());
+		    	  attrib.setElement(element);
+		    	  
+		    	  val.setContent(attribute.getValue());
+		    	  val.setAttribute(attrib);
+		    	  
+		    	  attributeList.add(attrib);
+		    	  if(!val.getContent().equals(""))
+		    	     valueList.add(val);
+		      }
+		 }
 		
         final NodeList children = e.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             final Node n = children.item(i);
             if (n.getNodeType() == Node.ELEMENT_NODE) {
-                go(list, (Element) n);
+            	getXmlAllContent(elementList, attributeList, valueList, (Element) n);
             }
         }
     }	
-	
-	
-	
 }

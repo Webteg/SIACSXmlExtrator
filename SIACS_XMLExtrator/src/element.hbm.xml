@@ -15,11 +15,7 @@
 		<many-to-one name="parent_element" class="model.business.Element" cascade="all">
 			<column name="id_parent_element" not-null="false" />
         </many-to-one>
-        
-  		<set name="element" table="element" lazy="false" cascade="all-delete-orphan" inverse="false">
-			<key column="id_parent_element" />
-			<one-to-many class="model.business.Element" />
-     	</set>        
+                
     </class>
 
 </hibernate-mapping>

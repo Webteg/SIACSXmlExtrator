@@ -5,33 +5,32 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
-import model.business.Attribute;
-import model.business.Element;
-import model.business.Value;
+import model.db.ManagerDB;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 
 public class SIACSXmlExtrator {
-	private HashMap<String, Element> hashElement = new HashMap<String, Element>();
-	private HashMap<String, Attribute> hashAttribute = new HashMap<String, Attribute>();
-	private List<Value> listValue = new ArrayList<Value>(); 
+	List<model.business.Element> elementList = new ArrayList<model.business.Element>();
+	List<model.business.Attribute> attributeList = new ArrayList<model.business.Attribute>();
 
 	private ZipInputStream zis;
+	ManagerDB managerDB = ManagerDB.getInstance();
 	private static SIACSXmlExtrator singleton = null;
 
 
@@ -73,12 +72,12 @@ public class SIACSXmlExtrator {
 			zis = new ZipInputStream(new FileInputStream(caminho_do_zip));
 			ZipEntry ze = zis.getNextEntry();
 			byte[] buffer = new byte[1024];
-			String unzipXmlPath = "";
+			String unzippedXmlPath = "";
 			
 			while(ze != null){
 				String fileName = ze.getName();
 				File newFile = new File(destino + File.separator + fileName);
-				unzipXmlPath += newFile.getAbsoluteFile();
+				unzippedXmlPath += newFile.getAbsoluteFile();
 
 				new File(newFile.getParent()).mkdirs();
 
@@ -91,91 +90,75 @@ public class SIACSXmlExtrator {
 				
 				ze = zis.getNextEntry();
 	     	}
-			this.readXML(unzipXmlPath);
+			this.readXML(unzippedXmlPath);
 		}catch(IOException e){
 			System.out.println(e.getMessage());
 		}
 	}
 	
 	//#3
-	public void readXML(String unzipXmlPath){
+	public void readXML(String unzippedXmlPath){
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = null;
+
 		try {
-			SAXParserFactory factory = SAXParserFactory.newInstance();
-			SAXParser saxParser = factory.newSAXParser();
-
-			DefaultHandler handler = new DefaultHandler() {
-
-				public void startElement(String uri, String localName,String qName, Attributes attributes) throws SAXException {
-					
-					/*
-					Element element = new Element();
-					element.setName(qName);
-					hashElement.put(qName, element);
-
-					int length = attributes.getLength();
-					for (int i=0; i<length; i++) {
-						String attributeName = attributes.getQName(i);
-						Attribute attribute = new Attribute();
-						attribute.setName(attributeName);
-						attribute.setElement(element);
-						hashAttribute.put(attributeName, attribute);
-
-						String content = attributes.getValue(attributeName);
-						if(!content.equals("")){
-							Value value = new Value();
-							value.setContent(attributes.getValue(attributeName));
-							value.setAttribute(attribute);
-							listValue.add(value);
-						}
-					}
-					 */
-				}
-				
-
-			    public void endElement(String uri, String localName, String qName) throws SAXException {
-			    	
-			    	/*
-			    	System.out.println(qName);
-			    	System.out.println("===============");
-			    	*/
-			    }
-
-			};
-			saxParser.parse(unzipXmlPath, handler);
-			//seeElements();
-			//seeAttributes();
-			//seeValues();
-		}catch (Exception e) {
-			e.printStackTrace();
-		}		    
-	}
-		/*
-		public void seeElements(){
-			Iterator it = this.hashElement.values().iterator();
-			while(it.hasNext()){
-				Element element = (Element) it.next();
-				System.out.println(element.getName());
-			}
+			db = dbf.newDocumentBuilder();
+		}catch (Exception e){
+			System.out.println(e.getMessage());
 		}
+
+		Document doc = null;
 		
-		public void seeAttributes(){
-			Iterator it = this.hashAttribute.values().iterator();
-			while(it.hasNext()){
-				Attribute attribute = (Attribute) it.next();				
-				System.out.println(attribute.getName());
-				System.out.println("Element: " + attribute.getElement().getName());
-				System.out.println("================");
-			}
-		}		
+		try {
+			doc = db.parse(unzippedXmlPath);
+		}catch (Exception e){
+			System.out.println(e.getMessage());
+		}	    
 		
-		public void seeValues(){
-			Iterator it = this.listValue.iterator();
-			while(it.hasNext()){
-				Value value = (Value) it.next();
-				System.out.println(value.getContent());
-				System.out.println("Attribute: " + value.getAttribute().getName());
-				System.out.println("================");
-			}
-		}	
-		*/	
+		getXmlElements(elementList, doc.getDocumentElement());
+ 		
+		int size = elementList.size();
+ 		for(int i = 0; i < size ; ++i){
+ 			model.business.Element element = (model.business.Element) elementList.get(i);	
+ 			managerDB.insertElement(element);
+ 		}
+	
+ 		getXmlAttributes(elementList, doc.getDocumentElement());
+	}
+
+	//#4
+	public void getXmlElements(List<model.business.Element> elementList, Element e){
+		model.business.Element element = new model.business.Element();
+		model.business.Element parentElement = new model.business.Element();
+		
+		String nameparentElement =  e.getParentNode().toString().replace(": null]", "").replace("[", "");
+		if(nameparentElement.equals("#document"))
+			nameparentElement = null;
+		
+		element.setName(e.getNodeName());
+		parentElement.setName(nameparentElement);
+		
+		element.setParent_element(parentElement);
+		elementList.add(element);
+		
+        final NodeList children = e.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            final Node n = children.item(i);
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+            	getXmlElements(elementList, (Element) n);
+            }
+        }
+    }	
+	
+	//#5
+	public void getXmlAttributes(List<model.business.Element> elementList, Element e){
+		model.business.Attribute attribute = new model.business.Attribute();
+		
+		int size = elementList.size();
+ 		for(int i = 0; i < size ; ++i){
+ 			model.business.Element element = (model.business.Element) elementList.get(i);	
+ 			e.getAttribute(element.getName());
+ 		}		
+		
+	}
 }

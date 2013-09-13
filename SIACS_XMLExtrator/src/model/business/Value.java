@@ -31,6 +31,8 @@ public class Value{
 		this.attribute = attribute;
 	}
 	
-	
+	public String toString(){
+		return "Valor: " + this.getContent() + " Atributo: " + this.getAttribute().getName() + " Elemento: " + this.getAttribute().getElement().getName();
+	}
 	
 }

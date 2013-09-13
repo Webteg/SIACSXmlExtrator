@@ -43,6 +43,8 @@ public class Attribute {
 		this.value = value;
 	} 
 	
-	
+	public String toString(){
+		return "Nome: " + this.getName() + " Elemento: " + this.getElement().getName();
+	}
 	
 }

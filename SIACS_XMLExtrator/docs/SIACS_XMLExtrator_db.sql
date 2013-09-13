@@ -14,6 +14,9 @@ CREATE TABLE IF NOT EXISTS `siacs_xml_extrator`.`element` (
   REFERENCES `siacs_xml_extrator`.`element` (`id_element`)
 );
 
+CREATE UNIQUE INDEX element_index_name ON element (`name`, `id_parent_element`);
+INSERT INTO `siacs_xml_extrator`.`element` (`name`, `id_parent_element`) VALUES (null, null);
+
 -- -----------------------------------------------------
 -- Table `siacs_xml_extrator`.`attribute`
 -- -----------------------------------------------------
@@ -25,13 +28,14 @@ CREATE TABLE IF NOT EXISTS `siacs_xml_extrator`.`attribute` (
   FOREIGN KEY (`id_element`) REFERENCES `siacs_xml_extrator`.`element` (`id_element`)
 );
 
+CREATE UNIQUE INDEX attribute_index_name ON attribute (`name`);
 
 -- -----------------------------------------------------
 -- Table `siacs_xml_extrator`.`value`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `siacs_xml_extrator`.`value` (
   `id_value` INT(11) NOT NULL AUTO_INCREMENT,
-  `content` VARCHAR(255) NULL DEFAULT NULL,
+  `content` TEXT NULL DEFAULT NULL,
   `id_attribute` INT(11) NOT NULL,
   PRIMARY KEY (`id_value`),
   FOREIGN KEY (`id_attribute`) REFERENCES `siacs_xml_extrator`.`attribute` (`id_attribute`)

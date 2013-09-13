@@ -13,7 +13,6 @@ public class ElementDAOHibernate implements IElementDAO {
 	public void save(Element element) throws Exception {
 		Transaction t = session.beginTransaction();
 		session.save(element);
-		session.flush();
 		t.commit();		
 	}
 
